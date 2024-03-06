@@ -18,4 +18,4 @@ async def process_gpx(file: UploadFile = File(...)):
     result = await process_coords(temp_file, indentation=None)
     temp_file.unlink()
 
-    return result
+    return {"data": result}

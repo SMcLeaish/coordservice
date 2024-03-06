@@ -11,7 +11,7 @@ python = ">=3.10,<3.12"
 fastapi = "^0.110.0"
 uvicorn = "^0.27.1"
 python-multipart = "^0.0.9"
-coordextract = {path = "../coordextract"}
+coordextract = "^0.1.2"
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.8.0"
@@ -41,7 +41,7 @@ httpx = "^0.27.0"
 [tool.mypy]
 strict = true
 mypy_path = "typings"
-files = "coordextract-service, tests"
+files = "coordservice, tests"
 
 [tool.black]
 line-length = 79

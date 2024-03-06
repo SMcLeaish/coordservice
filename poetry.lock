@@ -258,24 +258,22 @@ cron = ["capturer (>=2.4)"]
 
 [[package]]
 name = "coordextract"
-version = "0.1.0"
-description = "coordextract is a Python library and CLI tool for converting latitude and longitude data from GPX files into Military Grid Reference System (MGRS) coordinates. The library parses GPX files, extracts geographical points, and provides an efficient way to convert and export these points into various formats."
+version = "0.1.2"
+description = "coordextract is a Python library and CLI tool for converting data from GPX files into pydantic models and adding MGRS coordinates to the data. The CLI will return the data in JSON format."
 optional = false
 python-versions = ">=3.10,<3.12"
-files = []
-develop = false
+files = [
+    {file = "coordextract-0.1.2-py3-none-any.whl", hash = "sha256:b2d8f91fd01d037cf59547226c10eff845bc3025d22910b3d91bfdfa072e2154"},
+    {file = "coordextract-0.1.2.tar.gz", hash = "sha256:3f4b27f56ca2b9734101647268f120d1c9a10d6e26a929f7bf2b5aee7f86e6f6"},
+]
 
 [package.dependencies]
-aiofiles = "^23.2.1"
-lxml = "^5.1.0"
-magika = "^0.5.0"
-mgrs = "^1.4.6"
-pydantic = "^2.6.1"
-typer = "^0.9.0"
-
-[package.source]
-type = "directory"
-url = "../coordextract"
+aiofiles = ">=23.2.1,<24.0.0"
+lxml = ">=5.1.0,<6.0.0"
+magika = ">=0.5.0,<0.6.0"
+mgrs = ">=1.4.6,<2.0.0"
+pydantic = ">=2.6.1,<3.0.0"
+typer = ">=0.9.0,<0.10.0"
 
 [[package]]
 name = "coverage"
@@ -1696,4 +1694,4 @@ standard = ["colorama (>=0.4)", "httptools (>=0.5.0)", "python-dotenv (>=0.13)",
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.12"
-content-hash = "8f80caf3a1805a838671f975d09e41637300f63d6094981fdcd056775a869655"
+content-hash = "2f425375a6b132d3b04ed4ddfc387bbde0598243632234d4f864149b74518c51"

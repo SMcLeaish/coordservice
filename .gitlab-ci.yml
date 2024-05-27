@@ -67,15 +67,21 @@ sast:
 
 build_image:
   stage: build
+  image: docker:latest
   services:
     - docker:dind
+  variables:
+    DOCKER_TLS_CERTDIR: "/certs"
   script:
     - docker build -t $CI_REGISTRY_IMAGE/coordservice:$IMAGE_TAG .
 
 push_image:
   stage: push
+  image: docker:latest
   services:
     - docker:dind
+  variables:
+    DOCKER_TLS_CERTDIR: "/certs"
   script:
     - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
     - docker push $CI_REGISTRY_IMAGE/coordservice:$IMAGE_TAG
@@ -84,6 +90,7 @@ push_image:
 
 cleanup:
   stage: cleanup
+  image: docker:latest
   services:
     - docker:dind
   script:

@@ -1,28 +1,22 @@
-FROM python:3.11-slim
+FROM python:3.11-slim AS builder
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    curl \
-    build-essential \
-    libffi-dev \
-    mime-support \
-    && rm -rf /var/lib/apt/lists/*
-
-ENV POETRY_VERSION=1.7.1 \
-    PATH="/root/.local/bin:${PATH}"
-RUN curl -sSL https://install.python-poetry.org | python3 - --version $POETRY_VERSION
+RUN pip install poetry
 
 WORKDIR /app
 
-COPY coordextract-local /app/coordextract-local
+COPY pyproject.toml poetry.lock ./
+COPY coordextract ./coordextract
 
-# To run off of a local wheel for testing
-# RUN pip install /app/coordextract-local/*.whl
+RUN poetry config virtualenvs.in-project true
+RUN poetry install --no-dev
 
-COPY . /app
+FROM docker:latest
 
-RUN  poetry config virtualenvs.create false \
-    && poetry install --no-interaction --no-ansi    
+COPY --from=builder /app /app
 
+WORKDIR /app
 
-CMD ["uvicorn", "coordservice.main:app", "--host", "0.0.0.0", "--port", "8000"]
+EXPOSE 8000
+
+CMD ["poetry", "run", "uvicorn", "coordextract:app", "--host", "0.0.0.0", "--port", "8000"]
 

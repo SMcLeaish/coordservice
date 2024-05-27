@@ -7,10 +7,7 @@ workflow:
       - when: never
 
 stages:
-   - prepare
-   - qa
    - test
-   - sast
    - build
    - push
    - cleanup
@@ -31,7 +28,7 @@ variables:
       - poetry config cache-dir .cache/pypoetry
 
 qa:
-   stage: qa
+   stage: test
    extends: .default_before_script
    script:
       - poetry install
@@ -57,7 +54,7 @@ test:
             path: coverage.xml
 
 sast:
-   stage: sast
+   stage: test
 
 build_image:
   stage: build
@@ -66,6 +63,9 @@ build_image:
     - docker:dind
   script:
     - docker build -t $CI_REGISTRY_IMAGE/coordservice:$IMAGE_TAG .
+  artifacts:
+    paths:
+      - .docker
 
 push_image:
   stage: push

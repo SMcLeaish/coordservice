@@ -1,77 +1,67 @@
 workflow:
-  rules:
-    - if: $CI_MERGE_REQUEST_ID
-      when: always
-    - if: '$CI_COMMIT_BRANCH == "main"'
-      when: always
-    - when: never
+   rules:
+      - if: $CI_MERGE_REQUEST_ID
+        when: always
+      - if: '$CI_COMMIT_BRANCH == "main"'
+        when: always
+      - when: never
 
 stages:
-  - prepare
-  - qa
-  - test
-  - sast
-  - build
-  - push
-  - cleanup
+   - prepare
+   - qa
+   - test
+   - sast
+   - build
+   - push
 
 include:
-  - template: Jobs/SAST.gitlab-ci.yml
+   - template: Jobs/SAST.gitlab-ci.yml
 
 variables:
-  IMAGE_TAG: $CI_COMMIT_REF_NAME
-  CI_REGISTRY_IMAGE: registry.gitlab.com/smcleaish/sm-services
-  DOCKER_DRIVER: overlay2
+   IMAGE_TAG: $CI_COMMIT_REF_NAME
+   CI_REGISTRY_IMAGE: registry.gitlab.com/smcleaish/sm-services
+   DOCKER_DRIVER: overlay2
 
-default:
-  image: python:3.11-slim
-  cache:
-    paths:
-      - .cache/pypoetry
-      - .venv/
-    key:
-      files:
-        - poetry.lock
-
-before_script:
-  - apt-get update && apt-get install -y docker.io
-  - pip install poetry
-  - poetry config virtualenvs.in-project true
-  - poetry config cache-dir .cache/pypoetry
-  - poetry install
+.default_before_script:
+   before_script:
+      - pip install poetry
+      - poetry config virtualenvs.in-project true
+      - poetry config cache-dir .cache/pypoetry
 
 qa:
-  stage: qa
-  script:
-    - poetry run isort . --check
-    - poetry run black . --check
-    - poetry run mypy coordextract
-    - poetry run pylint coordextract tests
-  allow_failure: true
+   stage: qa
+   extends: .default_before_script
+   script:
+      - poetry install
+      - poetry run isort . --check
+      - poetry run black . --check
+      - poetry run mypy coordextract
+      - poetry run pylint coordextract tests
+   allow_failure: true
 
 test:
-  stage: test
-  coverage: /TOTAL.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/
-  script:
-    - poetry run pytest --cov=coordextract --cov-report=xml:coverage.xml --cov-report=term --junitxml=pytest.xml
-  allow_failure: true
-  artifacts:
-    reports:
-      junit: pytest.xml
-      coverage_report:
-        coverage_format: cobertura
-        path: coverage.xml
+   stage: test
+   extends: .default_before_script
+   coverage: /TOTAL.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/
+   script:
+      - poetry install
+      - poetry run pytest --cov=coordextract --cov-report=xml:coverage.xml --cov-report=term --junitxml=pytest.xml
+   allow_failure: true
+   artifacts:
+      reports:
+         junit: pytest.xml
+         coverage_report:
+            coverage_format: cobertura
+            path: coverage.xml
 
 sast:
-  stage: sast
+   stage: sast
 
 build_image:
   stage: build
   image: docker:latest
   services:
     - docker:dind
-  variables:
-    DOCKER_TLS_CERTDIR: "/certs"
   script:
     - docker build -t $CI_REGISTRY_IMAGE/coordservice:$IMAGE_TAG .
 
@@ -80,8 +70,6 @@ push_image:
   image: docker:latest
   services:
     - docker:dind
-  variables:
-    DOCKER_TLS_CERTDIR: "/certs"
   script:
     - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
     - docker push $CI_REGISTRY_IMAGE/coordservice:$IMAGE_TAG

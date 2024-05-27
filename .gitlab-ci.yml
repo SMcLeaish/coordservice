@@ -13,7 +13,7 @@ stages:
    - sast
    - build
    - push
-
+   - cleanup
 include:
    - template: Jobs/SAST.gitlab-ci.yml
 

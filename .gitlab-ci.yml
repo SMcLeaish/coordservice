@@ -74,6 +74,8 @@ build_image:
   image: python:3.11-slim
   services:
     - docker:dind
+  before_script:
+    - apt-get update && apt-get install -y docker.io
   script:
     - docker build -t $CI_REGISTRY_IMAGE/coordservice:$IMAGE_TAG .
 

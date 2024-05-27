@@ -71,7 +71,7 @@ sast:
 
 build_image:
   stage: build
-  image: docker:latest
+  image: python:3.11-slim
   services:
     - docker:dind
   script:

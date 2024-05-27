@@ -14,12 +14,14 @@ stages:
    - build
    - push
    - cleanup
+
 include:
    - template: Jobs/SAST.gitlab-ci.yml
 
 variables:
-   IMAGE_TAG: $CI_COMMIT_REF_NAME
+   CI_REGISTRY: registry.gitlab.com
    CI_REGISTRY_IMAGE: registry.gitlab.com/smcleaish/sm-services
+   IMAGE_TAG: $CI_COMMIT_REF_NAME
    DOCKER_DRIVER: overlay2
 
 .default_before_script:
@@ -71,7 +73,7 @@ push_image:
   services:
     - docker:dind
   script:
-    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
     - docker push $CI_REGISTRY_IMAGE/coordservice:$IMAGE_TAG
   only:
     - main

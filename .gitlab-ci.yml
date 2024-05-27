@@ -17,11 +17,12 @@ include:
 
 variables:
    CI_REGISTRY: registry.gitlab.com
-   CI_REGISTRY_IMAGE: registry.gitlab.com/smcleaish/sm-services
+   CI_REGISTRY_IMAGE: registry.gitlab.com/smcleaish/sm-services/coordservice
    IMAGE_TAG: $CI_COMMIT_REF_NAME
    DOCKER_DRIVER: overlay2
 
 .default_before_script:
+   image: python:3.11-slim
    before_script:
       - pip install poetry
       - poetry config virtualenvs.in-project true
@@ -56,7 +57,7 @@ test:
 sast:
    stage: test
 
-build_and_push:
+build:
   stage: build
   image: docker:latest
   services:

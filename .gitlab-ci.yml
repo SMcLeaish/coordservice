@@ -17,7 +17,7 @@ include:
 
 variables:
    CI_REGISTRY: registry.gitlab.com
-   CI_REGISTRY_IMAGE: registry.gitlab.com/smcleaish/sm-services/coordservice
+   CI_REGISTRY_IMAGE: registry.gitlab.com/smcleaish-services/coordservice
    IMAGE_TAG: $CI_COMMIT_REF_NAME
    DOCKER_DRIVER: overlay2
 
